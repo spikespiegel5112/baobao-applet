@@ -63,12 +63,12 @@ exports.deleteProduct = (req, res, next) => {
 	Product.findByPk(id).then(result => {
 		result.destroy();
 		res.status(200).json({
-			message: 'delete product successful',
+			message: 'delete successful',
 			body: req.body
 		});
 	}).catch(error => {
 		res.status(400).json({
-			message: 'delete product failed',
+			message: 'delete failed',
 			error: error.toString()
 		});
 	})

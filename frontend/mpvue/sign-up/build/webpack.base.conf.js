@@ -1,32 +1,32 @@
-var path = require('path')
-var fs = require('fs')
-var utils = require('./utils')
-var config = require('../config')
-var webpack = require('webpack')
-var merge = require('webpack-merge')
-var vueLoaderConfig = require('./vue-loader.conf')
-var MpvuePlugin = require('webpack-mpvue-asset-plugin')
-var glob = require('glob')
-var CopyWebpackPlugin = require('copy-webpack-plugin')
-var relative = require('relative')
+var path = require('path');
+var fs = require('fs');
+var utils = require('./utils');
+var config = require('../config');
+var webpack = require('webpack');
+var merge = require('webpack-merge');
+var vueLoaderConfig = require('./vue-loader.conf');
+var MpvuePlugin = require('webpack-mpvue-asset-plugin');
+var glob = require('glob');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+var relative = require('relative');
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
-function getEntry (rootSrc) {
+function getEntry(rootSrc) {
   var map = {};
   glob.sync(rootSrc + '/pages/**/main.js')
-  .forEach(file => {
-    var key = relative(rootSrc, file).replace('.js', '');
-    map[key] = file;
-  })
-   return map;
+    .forEach(file => {
+      var key = relative(rootSrc, file).replace('.js', '');
+      map[key] = file;
+    });
+  return map;
 }
 
-const appEntry = { app: resolve('./src/main.js') }
-const pagesEntry = getEntry(resolve('./src'), 'pages/**/main.js')
-const entry = Object.assign({}, appEntry, pagesEntry)
+const appEntry = {app: resolve('./src/main.js')};
+const pagesEntry = getEntry(resolve('./src'), 'pages/**/main.js');
+const entry = Object.assign({}, appEntry, pagesEntry);
 
 let baseWebpackConfig = {
   // 如果要自定义生成的 dist 目录里面的文件路径，
@@ -74,7 +74,7 @@ let baseWebpackConfig = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 100000,
           name: utils.assetsPath('img/[name].[ext]')
         }
       },
@@ -93,6 +93,14 @@ let baseWebpackConfig = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[ext]')
         }
+      },
+      {
+        test: /\.sass$/,
+        loader: "style-loader!css-loader!sass-loader",
+      },
+      {
+        test: /\.scss$/,
+        loader: "style-loader!css-loader!sass-loader",
       }
     ]
   },
@@ -117,7 +125,7 @@ let baseWebpackConfig = {
       }
     ])
   ]
-}
+};
 
 // 针对百度小程序，由于不支持通过 miniprogramRoot 进行自定义构建完的文件的根路径
 // 所以需要将项目根路径下面的 project.swan.json 拷贝到构建目录
@@ -125,9 +133,9 @@ let baseWebpackConfig = {
 const projectConfigMap = {
   tt: '../project.config.json',
   swan: '../project.swan.json'
-}
+};
 
-const PLATFORM = process.env.PLATFORM
+const PLATFORM = process.env.PLATFORM;
 if (/^(swan)|(tt)$/.test(PLATFORM)) {
   baseWebpackConfig = merge(baseWebpackConfig, {
     plugins: [
@@ -139,4 +147,4 @@ if (/^(swan)|(tt)$/.test(PLATFORM)) {
   })
 }
 
-module.exports = baseWebpackConfig
+module.exports = baseWebpackConfig;
